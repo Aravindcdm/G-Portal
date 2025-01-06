@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        /* Base Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+    
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Log-Out Button */
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #e74c3c;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+    
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    
+        /* Buttons */
+        button {
+            background-color: #1abc9c;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+    
+        button:hover {
+            background-color: #16a085;
+        }
+    
+        /* Grievance Card Styling */
+        .grievance {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+    
+        .grievance:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        }
+    
+        .grievance div:first-child {
+            flex-grow: 1;
+        }
+    
+        .grievance p {
+            margin: 5px 0;
+        }
+    
+        /* Status Button */
+        .status-btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    
+        .solved {
+            background-color: #27ae60;
+            color: #fff;
+        }
+    
+        .unsolved {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+    
+        /* Icon Buttons */
+        .icon-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+    
+        .icon-button {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            position: relative;
+            background-color: #1abc9c; /* Message icon background color */
+            border-radius: 50%;
+            padding: 8px;
+        }
+    
+        .icon-button:hover {
+            color: #fff; /* Text color on hover */
+            background-color: #c0392b; /* Darker background on hover */
+        }
+    
+        /* Notification Badge */
+        .notification {
+            background-color: #fff;
+            color: #e74c3c;
+            font-size: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+    
+        /* Message Pop-up */
+        .message-popup {
+            position: absolute;
+            display: none; /* Initially hidden */
+            width: 250px;
+            background-color: #718782;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1000;
+            top: 50px; /* Distance from the top of the page */
+            left: 0;
+            right: 0;
+            margin: auto;
+            color: #fff;
+        }
+
+        /* Arrow for the message popup */
+        .message-popup::after {
+            content: '';
+            position: absolute;
+            top: 15px; /* Aligns the arrow with the top of the popup */
+            left: -12px; /* Position the arrow on the left side */
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent #718782 transparent transparent; /* White arrow */
+        }
+
+        /* Close Button Inside Popup */
+        .message-popup button {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .message-popup button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+    
+            .grievance {
+                flex-direction: column;
+                align-items: stretch;
+            }
+    
+            .grievance div:first-child {
+                flex-grow: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="logout-btn" onclick="window.location.href='login.html'">Log Out</button>
+    
+    <div class="container">
+        <h1>Welcome, Student!</h1>
+
+        <button onclick="window.location.href='form.html'">Submit New Grievance</button>
+        <button onclick="window.location.href='grievances.html'">Grievance Dashboard</button>
+
+        <h2>Your Submitted Grievances</h2>
+        <div id="grievance-list">
+            <!-- Grievances will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <!-- Message pop-up for grievance -->
+    <div class="message-popup" id="messagePopup">
+        <p id="messageContent">This is a sample message.</p>
+        <button onclick="closeMessage()">X</button>
+    </div>
+
+    <script>
+        // Function to display grievances
+        function displayGrievances() {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            const grievanceList = document.getElementById('grievance-list');
+            grievanceList.innerHTML = ''; // Clear the previous list
+
+            if (grievances.length === 0) {
+                grievanceList.innerHTML = '<p>You have not submitted any grievances yet.</p>';
+            } else {
+                grievances.forEach((grievance, index) => {
+                    const grievanceDiv = document.createElement('div');
+                    grievanceDiv.classList.add('grievance');
+                    grievanceDiv.innerHTML = `
+                    <div>
+                        <p><strong>Subject:</strong> ${grievance.subject}</p>
+                        <p><strong>Details:</strong> ${grievance.details}</p>
+                        <p><strong>Department:</strong> ${grievance.department || 'Anonymous'}</p>
+                        <p><strong>Priority:</strong> ${grievance.priority}</p>
+                    </div>
+                    <div>
+                        <button class="status-btn ${grievance.solved ? 'solved' : 'unsolved'}">
+                            ${grievance.solved ? 'Solved' : 'Unsolved'}
+                        </button>
+                        <div class="icon-buttons">
+                            <button class="icon-button" onclick="deleteGrievance(${index})" title="Delete">
+                                🗑️
+                            </button>
+                            <button class="icon-button" onclick="showMessage('${grievance.reply || 'No reply yet.'}')" title="View Reply">
+                                💬
+                                ${grievance.reply ? '<span class="notification">!</span>' : ''}
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                    grievanceList.appendChild(grievanceDiv);
+                });
+            }
+        }
+
+        // Function to show message in the pop-up next to the message icon
+        function showMessage(message) {
+            const messagePopup = document.getElementById('messagePopup');
+            const messageContent = document.getElementById('messageContent');
+            messageContent.innerText = message; // Set message text
+            messagePopup.style.display = 'block'; // Display the message box next to the icon
+
+            // Get the position of the message icon and adjust the popup accordingly
+            const iconButton = event.target;
+            const rect = iconButton.getBoundingClientRect();
+            messagePopup.style.left = `${rect.left + rect.width + 10}px`; // Position to the right of the icon
+            messagePopup.style.top = `${rect.top + window.scrollY - 20}px`; // Align vertically
+        }
+
+        // Function to close the message pop-up
+        function closeMessage() {
+            const messagePopup = document.getElementById('messagePopup');
+            messagePopup.style.display = 'none'; // Hide the message box
+        }
+
+        // Function to delete a grievance
+        function deleteGrievance(index) {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            grievances.splice(index, 1); // Remove the grievance from the list
+            localStorage.setItem('grievances', JSON.stringify(grievances));
+            displayGrievances(); // Refresh the grievance list
+        }
+
+        // Call the function to display grievances on page load
+        window.onload = displayGrievances;
+    </script>
+</body>
+</html>

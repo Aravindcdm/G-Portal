@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grievance Dashboard</title>
+    <style>
+        /* Base styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* Header styling */
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        p.introduction {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin: 10px 20px 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        /* Label and dropdown styling */
+        label {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #34495e;
+            margin-right: 10px;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid #bdc3c7;
+            font-size: 1rem;
+            color: #2c3e50;
+            background-color: #ecf0f1;
+            transition: border-color 0.3s, background-color 0.3s;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:hover, select:focus {
+            border-color: #3498db;
+            background-color: #ffffff;
+        }
+
+        select option {
+            padding: 10px;
+            color: #333;
+        }
+
+        /* Content container */
+        .department {
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        /* Grievance card */
+        .grievance {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .grievance:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .grievance p {
+            margin: 5px 0;
+            font-size: 0.95rem;
+            color: #7f8c8d;
+        }
+
+        .priority {
+            font-weight: bold;
+            color: #e67e22;
+        }
+
+        /* Buttons */
+        button {
+           /* background-color: #007BFF; */
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        /* Headings */
+        h2 {
+            color: #34495e;
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #bdc3c7;
+        }
+
+        /* Grievance list styling */
+        #grievance-list {
+            padding: 10px;
+        }
+
+        #grievance-list p {
+            margin: 5px 0;
+        }
+    </style>
+    <script>
+        function fetchGrievances(department) {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            const filteredGrievances = grievances.filter(g => g.department === department);
+
+            const container = document.getElementById('grievance-list');
+            container.innerHTML = ''; // Clear previous grievances
+
+            // Group grievances by priority
+            const priorities = ['high', 'medium', 'low'];
+            priorities.forEach(priority => {
+                const priorityGrievances = filteredGrievances
+                    .filter(g => g.priority === priority)
+                    .sort((a, b) => b.votes - a.votes);
+
+                if (priorityGrievances.length > 0) {
+                    const priorityHeading = document.createElement('h2');
+                    priorityHeading.textContent = `${priority.charAt(0).toUpperCase() + priority.slice(1)} Priority`;
+                    container.appendChild(priorityHeading);
+
+                    priorityGrievances.forEach(grievance => {
+                        const grievanceDiv = document.createElement('div');
+                        grievanceDiv.classList.add('grievance');
+                        grievanceDiv.innerHTML = `
+                            <p><strong>${grievance.subject}</strong></p>
+                            <p>${grievance.details}</p>
+                            <p><span class="priority">${priority.charAt(0).toUpperCase() + priority.slice(1)}</span> - Votes: ${grievance.votes}</p>
+                            <button onclick="vote(${grievance.id})">Vote</button>
+                        `;
+                        container.appendChild(grievanceDiv);
+                    });
+                }
+            });
+        }
+
+        function vote(grievanceId) {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            const grievance = grievances.find(g => g.id === grievanceId);
+            if (grievance) {
+                grievance.votes += 1;
+                localStorage.setItem('grievances', JSON.stringify(grievances));
+                const department = document.getElementById('departmentSelect').value;
+                fetchGrievances(department); // Refresh grievances
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Grievance Dashboard</h1>
+    <p class="introduction">
+        Welcome to the Grievance Dashboard! Here, you can view and address student grievances categorized by department and priority. Use the dropdown menu to filter grievances by department, <br> and vote on issues that matter the most to you.
+    </p>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <label for="departmentSelect">Select Department:</label>
+        <select id="departmentSelect" onchange="fetchGrievances(this.value)">
+            <option value="">--Select Department--</option>
+            <option value="ECE">ECE</option>
+            <option value="IT">IT</option>
+            <option value="CSE">CSE</option>
+            <option value="AIDS">AIDS</option>
+            <option value="AIML">AIML</option>
+            <option value="MECH">MECH</option>
+            <option value="CIVIL">CIVIL</option>
+            <option value="EEE">EEE</option>
+            <option value="AGRI">AGRI</option>
+        </select>
+    </div>
+
+    <div id="grievance-list" class="department"></div>
+</body>
+</html>

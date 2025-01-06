@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            width: 300px;
+            height: 400px;
+            perspective: 1000px;
+        }
+        .card-container {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .card {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .login-form, .admin-form {
+            background-color: white;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+        .login-form input, .admin-form input {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-form button, .admin-form button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-form button:hover, .admin-form button:hover {
+            background-color: #45a049;
+        }
+        .flip-btn {
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
+            color: #007bff;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block; /* Ensure the error message appears on its own line */
+        }
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="card-container" id="card-container">
+            <!-- User Login -->
+            <div class="card login-form" id="user-card">
+                <h2>User Login</h2>
+                <form id="user-form">
+                    <div class="form-section">
+                        <input type="email" id="user-email" placeholder="Enter your email" required />
+                        <span class="error" id="user-error"></span>
+                        <button type="submit">Login</button>
+                    </div>
+                </form>
+                <div class="flip-btn" onclick="flipCard()">Login as Admin</div>
+            </div>
+
+            <!-- Admin Login -->
+            <div class="card admin-form" id="admin-card" style="transform: rotateY(180deg);">
+                <h2>Admin Login</h2>
+                <form id="admin-form">
+                    <div class="form-section">
+                        <input type="text" id="admin-username" placeholder="Username" required />
+                        <input type="password" id="admin-password" placeholder="Password" required />
+                        <span class="error" id="admin-error"></span>
+                        <button type="submit">Login</button>
+                    </div>
+                </form>
+                <div class="flip-btn" onclick="flipCard()">Back to User Login</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to handle the card flip
+        function flipCard() {
+            const cardContainer = document.getElementById('card-container');
+            // Check the current rotation and toggle between front and back
+            const currentTransform = cardContainer.style.transform;
+            if (currentTransform === 'rotateY(180deg)' || currentTransform === '') {
+                cardContainer.style.transform = 'rotateY(0deg)';
+            } else {
+                cardContainer.style.transform = 'rotateY(180deg)';
+            }
+        }
+
+        // User login validation
+        document.getElementById('user-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('user-email').value;
+            const userError = document.getElementById('user-error');
+            
+            if (!email.endsWith('@bitsathy.ac.in')) {
+                userError.textContent = 'Please enter a valid bitsathy email id.';
+            } else {
+                userError.textContent = '';
+                // Redirect to index.html after successful user login
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Admin login validation
+        document.getElementById('admin-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            const adminError = document.getElementById('admin-error');
+
+            if (username !== 'admin' || password !== 'bit') {
+                adminError.textContent = 'Invalid admin credentials.';
+            } else {
+                adminError.textContent = '';
+                // Redirect to admin.html after successful admin login
+                window.location.href = 'admin.html';
+            }
+        });
+    </script>
+
+</body>
+</html>

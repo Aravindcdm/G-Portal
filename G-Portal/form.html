@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grievance Form</title>
+    <style>
+        /* Base Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        /* Form Container */
+        form {
+            max-width: 600px;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        input, textarea, select, button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 14px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #16a085;
+        }
+
+        /* Submit as Anonymous Styling */
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .checkbox-label input {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+
+        .checkbox-label span {
+            font-weight: 600;
+        }
+
+        .checkbox-label input:checked + span {
+            color: #1abc9c;
+        }
+
+        /* Disabled fields styling */
+        input:disabled, select:disabled {
+            background-color: #e0e0e0;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            form {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Grievance Form</h1>
+        <form id="grievanceForm">
+            <label class="checkbox-label">
+                <input type="checkbox" id="anonymous" name="anonymous" style="margin-top: 14px;">
+                <span>Submit as Anonymous </span>
+            </label>
+
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" placeholder="Enter your full name">
+
+            <label for="department">Department</label>
+            <select id="department" name="department" required>
+                <option value="">--Select Department--</option>
+                <option value="ECE">ECE</option>
+                <option value="IT">IT</option>
+                <option value="CSE">CSE</option>
+                <option value="AIDS">AIDS</option>
+                <option value="AIML">AIML</option>
+                <option value="MECH">MECH</option>
+                <option value="CIVIL">CIVIL</option>
+                <option value="EEE">EEE</option>
+                <option value="AGRI">AGRI</option>
+            </select>
+
+            <label for="grievanceSubject">Subject of Grievance</label>
+            <select id="grievanceSubject" name="grievanceSubject" required>
+                <option value="">--Select Subject--</option>
+                <option value="Academics">Academics</option>
+                <option value="Food">Food</option>
+                <option value="Hostel">Hostel</option>
+                <option value="Management">Management</option>
+                <option value="Others">Others</option>
+            </select>
+
+            <label for="grievanceDetails">Details of the Grievance</label>
+            <textarea id="grievanceDetails" name="grievanceDetails" rows="5" placeholder="Describe your grievance in detail" required></textarea>
+
+            <label for="priority">Priority</label>
+            <select id="priority" name="priority" required>
+                <option value="">--Select Priority--</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+
+            <button type="submit">Submit Grievance</button>
+        </form>
+    </div>
+
+    <script>
+        // Handle the "Submit as Anonymous" checkbox toggle
+        document.getElementById('anonymous').addEventListener('change', function() {
+            const isChecked = this.checked;
+            const fullNameField = document.getElementById('fullName');
+            const departmentField = document.getElementById('department');
+
+            // If "Submit as Anonymous" is checked, freeze the Name and Department fields
+            if (isChecked) {
+                fullNameField.disabled = true;
+                departmentField.disabled = true;
+            } else {
+                fullNameField.disabled = false;
+                departmentField.disabled = false;
+            }
+        });
+
+        // Handle the form submission
+        document.getElementById('grievanceForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Get form data
+            const grievance = {
+                id: Date.now(), // Unique ID for each grievance
+                anonymous: document.getElementById('anonymous').checked,
+                fullName: document.getElementById('anonymous').checked ? 'Anonymous' : document.getElementById('fullName').value,
+                department: document.getElementById('department').value,
+                subject: document.getElementById('grievanceSubject').value,
+                details: document.getElementById('grievanceDetails').value,
+                priority: document.getElementById('priority').value,
+                solved: false, // Initially unsolved
+            };
+
+            // Save to localStorage
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            grievances.push(grievance);
+            localStorage.setItem('grievances', JSON.stringify(grievances));
+
+            // Alert and stay on the same page
+            alert('Grievance submitted successfully!');
+            window.location.href = 'index.html'; // This will ensure the grievances are displayed on the main page.
+        });
+    </script>
+</body>
+</html>

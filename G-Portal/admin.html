@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f4f7fc;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .statistics {
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .statistics h2 {
+            font-size: 1.6rem;
+            color: #1abc9c;
+            margin-bottom: 15px;
+        }
+
+        .statistics p {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .statistics span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .statistics .department-list {
+            margin-top: 15px;
+        }
+
+        .statistics ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .statistics ul li {
+            font-size: 1rem;
+            color: #555;
+            padding: 5px 0;
+            border-bottom: 1px solid #f2f2f2;
+        }
+
+        .statistics ul li:last-child {
+            border-bottom: none;
+        }
+
+        .statistics ul li .department {
+            font-weight: 600;
+            color: #1abc9c;
+        }
+
+        .chart-title {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #1abc9c;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #1abc9c;
+            color: white;
+            font-weight: 600;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        .status-btn {
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .unsolved {
+            background-color: #e74c3c;
+        }
+
+        .solved {
+            background-color: #2ecc71;
+        }
+
+        .status-btn:hover {
+            opacity: 0.8;
+        }
+
+        textarea {
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .chart {
+            width: 250px !important;
+            height: 250px !important;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        button {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #16a085;
+        }
+
+        td button {
+            background-color: #e74c3c;
+            padding: 8px;
+            font-size: 1rem;
+            margin-top: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        td button:hover {
+            background-color: #c0392b;
+        }
+
+        @media (max-width: 768px) {
+            .statistics {
+                padding: 15px;
+            }
+
+            .chart {
+                width: 200px !important;
+                height: 200px !important;
+            }
+
+            table, .chart-container {
+                margin: 0;
+                padding: 0;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            th, td {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            .statistics p {
+                font-size: 1rem;
+            }
+
+            button {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            td button {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+        }
+
+        /* Styling for notification */
+        .notification {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background-color: #1abc9c;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            font-size: 1rem;
+        }
+
+        #messageIcon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        #messageIcon i {
+            font-size: 30px;
+            color: #1abc9c;
+        }
+
+        /* New styles for aligning Send button with message box */
+        .reply-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reply-container textarea {
+            flex-grow: 1;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            font-size: 0.9rem;
+        }
+
+        .send-btn {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background-color: #16a085;
+        }
+
+        .statistics .count-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .statistics .count-box .count-item {
+            text-align: center;
+            width: 30%;
+        }
+
+        .statistics .count-box .count-item i {
+            font-size: 2rem;
+            color: #1abc9c;
+        }
+
+        .statistics .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .statistics .progress-bar .filled {
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        .statistics .progress-bar.solved .filled {
+            background-color: #2ecc71;
+        }
+
+        .statistics .progress-bar.unsolved .filled {
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+
+    <div class="statistics">
+        <h2>Statistics</h2>
+        <div class="count-box">
+            <div class="count-item">
+                <i class="fas fa-th-list"></i>
+                <p>Total Grievances</p>
+                <p><span id="totalGrievances">0</span></p>
+            </div>
+            <div class="count-item">
+                <i class="fas fa-check-circle"></i>
+                <p>Solved Grievances</p>
+                <p><span id="solvedGrievances">0</span></p>
+            </div>
+            <div class="count-item">
+                <i class="fas fa-times-circle"></i>
+                <p>Unsolved Grievances</p>
+                <p><span id="unsolvedGrievances">0</span></p>
+            </div>
+        </div>
+
+        <!-- Progress Bars -->
+        <div>
+            <p>Grievances Status:</p>
+            <div class="progress-bar solved">
+                <div id="solvedProgress" class="filled"></div>
+            </div>
+            <div class="progress-bar unsolved">
+                <div id="unsolvedProgress" class="filled"></div>
+            </div>
+        </div>
+
+        <p>Grievances by Department:</p>
+        <div class="department-list">
+            <ul id="departmentCounts">
+                <!-- List of Departments will be populated here -->
+            </ul>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Subject</th>
+                <th>Details</th>
+                <th>Department</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Reply</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="grievanceTable">
+            <!-- Dynamic Content -->
+        </tbody>
+    </table>
+
+    <div class="chart-container">
+        <div>
+            <h3 class="chart-title">Grievances by Department</h3>
+            <canvas id="departmentChart" class="chart"></canvas>
+        </div>
+        <div>
+            <h3 class="chart-title">Grievances by Subject</h3>
+            <canvas id="subjectChart" class="chart"></canvas>
+        </div>
+    </div>
+
+    <div id="messageIcon">
+        <i class="fa fa-comment"></i>
+    </div>
+
+  
+    <script>
+        function updateStatistics(grievances) {
+            const total = grievances.length;
+            const solved = grievances.filter(g => g.solved).length;
+            const unsolved = total - solved;
+
+            document.getElementById('totalGrievances').textContent = total;
+            document.getElementById('solvedGrievances').textContent = solved;
+            document.getElementById('unsolvedGrievances').textContent = unsolved;
+
+            const solvedProgress = (solved / total) * 100;
+            const unsolvedProgress = (unsolved / total) * 100;
+
+            document.getElementById('solvedProgress').style.width = solvedProgress + '%';
+            document.getElementById('unsolvedProgress').style.width = unsolvedProgress + '%';
+
+            const departmentCounts = grievances.reduce((counts, grievance) => {
+                const department = grievance.department || 'Anonymous';
+                counts[department] = (counts[department] || 0) + 1;
+                return counts;
+            }, {});
+
+            const departmentList = document.getElementById('departmentCounts');
+            departmentList.innerHTML = '';
+            for (const department in departmentCounts) {
+                const li = document.createElement('li');
+                li.textContent = `${department}: ${departmentCounts[department]} grievances`;
+                departmentList.appendChild(li);
+            }
+
+            return departmentCounts;
+        }
+
+    
+        function updateCharts(departmentCounts, grievances) {
+            const departmentChart = new Chart(document.getElementById('departmentChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(departmentCounts),
+                    datasets: [{
+                        data: Object.values(departmentCounts),
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#F39C12'],
+                    }],
+                },
+            });
+    
+            const subjectCounts = grievances.reduce((acc, g) => {
+                acc[g.subject] = (acc[g.subject] || 0) + 1;
+                return acc;
+            }, {});
+    
+            const subjectChart = new Chart(document.getElementById('subjectChart').getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(subjectCounts),
+                    datasets: [{
+                        data: Object.values(subjectCounts),
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#F39C12'],
+                    }],
+                },
+            });
+        }
+    
+        function loadGrievances() {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            const grievanceTable = document.getElementById('grievanceTable');
+            grievanceTable.innerHTML = '';
+    
+            grievances.forEach((grievance, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = 
+                    `<td>${grievance.id}</td>
+                    <td>${grievance.subject}</td>
+                    <td>${grievance.details}</td>
+                    <td>${grievance.department || 'Anonymous'}</td>
+                    <td>${grievance.priority}</td>
+                    <td>
+                        <button 
+                            class="status-btn ${grievance.solved ? 'solved' : 'unsolved'}" 
+                            onclick="toggleStatus(${index})">
+                            ${grievance.solved ? 'Solved' : 'Unsolved'}
+                        </button>
+                    </td>
+                    <td>
+                        <div class="reply-container">
+                            <textarea 
+                                placeholder="Enter reply" 
+                                onchange="addReply(${index}, this.value)">${grievance.reply || ''}</textarea>
+                            <button onclick="sendMessage(${index})" class="send-btn">Send</button>
+                        </div>
+                    </td>
+                    <td>
+                        <button onclick="deleteGrievance(${index})">Delete</button>
+                    </td>`;
+                grievanceTable.appendChild(row);
+            });
+    
+            const departmentCounts = updateStatistics(grievances);
+            updateCharts(departmentCounts, grievances);
+        }
+    
+        function toggleStatus(index) {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            grievances[index].solved = !grievances[index].solved;
+            localStorage.setItem('grievances', JSON.stringify(grievances));
+            loadGrievances();
+        }
+    
+        function addReply(index, reply) {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            grievances[index].reply = reply;
+            localStorage.setItem('grievances', JSON.stringify(grievances));
+        }
+    
+        function sendMessage(index) {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            const grievance = grievances[index];
+            const message = grievance.reply || ''; // Get the message
+    
+            if (!message.trim()) {
+                alert('Please enter a message before sending.');
+                return;
+            }
+    
+            showNotification(`Message Sent to ${grievance.department || 'Anonymous'}`);
+    
+            grievances[index].replySent = true;
+            localStorage.setItem('grievances', JSON.stringify(grievances));
+    
+            loadGrievances();
+        }
+    
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+    
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    
+        // New function to delete grievance
+        function deleteGrievance(index) {
+            // Get the grievances from local storage
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+    
+            // Remove the grievance at the given index
+            grievances.splice(index, 1);
+    
+            // Save the updated grievances back to local storage
+            localStorage.setItem('grievances', JSON.stringify(grievances));
+    
+            // Reload the grievances to update the table and charts
+            loadGrievances();
+        }
+    
+        document.getElementById('messageIcon').onclick = function() {
+            const grievances = JSON.parse(localStorage.getItem('grievances')) || [];
+            const unreadMessages = grievances.filter(g => g.replySent && !g.replyViewed).map(g => g.id);
+    
+            // if (unreadMessages.length > 0) {
+            //     alert('You have unread messages!');
+            // } else {
+            //     alert('No new messages.');
+            // }
+        };
+    
+        loadGrievances();
+    </script>
+    
+</body>
+</html>
